@@ -26,14 +26,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* FaceMesh UMD */}
+        {/* Load DeepAR SDK from CDN */}
         <Script
-          src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"
-          strategy="beforeInteractive"
-        />
-        {/* Camera Utils UMD */}
-        <Script
-          src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
+          src="https://cdn.jsdelivr.net/npm/deepar@5.6.19/js/deepar.min.js"
           strategy="beforeInteractive"
         />
       </head>
