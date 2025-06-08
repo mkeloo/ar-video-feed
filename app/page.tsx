@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useRef } from "react";
 
+// ✅ Include the .deepar extension and ensure proper path
 const FILTERS = [
-  "/deepar-resources/masks/Emotions_Exaggerator.deepar",
+  "/deepar-resources/masks/Viking_Helmet_PBR/viking_helmet.deepar",
+  "/deepar-resources/masks/Emotions_Exaggerator/Emotions_Exaggerator.deepar",
 ];
 
 export default function ARMirror() {
@@ -14,23 +16,43 @@ export default function ARMirror() {
 
     let deepARInstance: any;
     (async () => {
-      const { initialize } = await import("deepar");
-      deepARInstance = await initialize({
-        licenseKey: process.env.NEXT_PUBLIC_DEEP_AR_SDK_KEY!,
-        canvas: canvasRef.current,
-        segmentationEnabled: true,
-        beautyEnabled: true,
-        facesTracking: true,
-        // ▶️ Point at your local folder under public/deepar-resources
-        // rootPath: "/deepar-resources",
-      });
-      sdkRef.current = deepARInstance;
+      try {
+        const { initialize } = await import("deepar");
 
-      await deepARInstance.startCamera();
-      deepARInstance.switchEffect(FILTERS[0]);
-    })().catch(console.error);
+        deepARInstance = await initialize({
+          licenseKey: process.env.NEXT_PUBLIC_DEEP_AR_SDK_KEY!,
+          canvas: canvasRef.current!,
+          segmentationEnabled: true,
+          beautyEnabled: true,
+          facesTracking: true,
+          // ✅ Don't set rootPath - let DeepAR load core files from CDN
+          // rootPath: "/deepar-resources/",
+          // ✅ Explicitly set the core path to CDN
+          additionalOptions: {
+            hint: "try-no-wasm-simd"
+          }
+        });
 
-    return () => deepARInstance?.close();
+        sdkRef.current = deepARInstance;
+
+        // ✅ Wait for camera to start before switching effects
+        await deepARInstance.startCamera();
+
+        // ✅ Add a small delay to ensure everything is initialized
+        setTimeout(() => {
+          deepARInstance.switchEffect(FILTERS[0]);
+        }, 3000);
+
+      } catch (error) {
+        console.error("DeepAR initialization failed:", error);
+      }
+    })();
+
+    return () => {
+      if (deepARInstance) {
+        deepARInstance.close();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -38,13 +60,30 @@ export default function ARMirror() {
     const interval = setInterval(() => {
       const sdk = sdkRef.current;
       if (!sdk) return;
+
       idx = (idx + 1) % FILTERS.length;
-      sdk.switchEffect(FILTERS[idx]);
+
+      // ✅ Add error handling for effect switching
+      try {
+        sdk.switchEffect(FILTERS[idx]);
+      } catch (error) {
+        console.error("Failed to switch effect:", error);
+      }
     }, 10000);
+
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <canvas ref={canvasRef} className="w-screen h-screen object-cover bg-black" />
+    <div className="relative w-screen h-screen bg-black">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full object-cover"
+      />
+      {/* ✅ Optional: Add loading indicator */}
+      {/* <div className="absolute top-4 left-4 text-white text-sm">
+        AR Mirror - Loading...
+      </div> */}
+    </div>
   );
 }
