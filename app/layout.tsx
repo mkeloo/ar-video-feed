@@ -25,10 +25,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        {/* Load DeepAR SDK from CDN */}
+      {/* <head>
         <Script
           src="https://cdn.jsdelivr.net/npm/deepar@5.6.19/js/deepar.min.js"
+          strategy="beforeInteractive"
+        />
+      </head> */}
+      <head>
+        {/* MediaPipe FaceMesh UMD bundle */}
+        <Script
+          src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"
+          strategy="beforeInteractive"
+        />
+        {/* MediaPipe CameraUtils UMD bundle */}
+        <Script
+          src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
           strategy="beforeInteractive"
         />
       </head>
