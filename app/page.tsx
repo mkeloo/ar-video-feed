@@ -4,7 +4,9 @@ import { useEffect, useRef } from "react";
 // ✅ Include the .deepar extension and ensure proper path
 const FILTERS = [
   "/deepar-resources/masks/Viking_Helmet_PBR/viking_helmet.deepar",
-  "/deepar-resources/masks/Emotions_Exaggerator/Emotions_Exaggerator.deepar",
+  // "/deepar-resources/masks/Emotions_Exaggerator/Emotions_Exaggerator.deepar",
+  // "/deepar-resources/masks/Humanoid/Humanoid.deepar",
+  "/deepar-resources/masks/Fire Effect/Fire_Effect.deepar",
 ];
 
 export default function ARMirror() {
@@ -41,7 +43,7 @@ export default function ARMirror() {
         // ✅ Add a small delay to ensure everything is initialized
         setTimeout(() => {
           deepARInstance.switchEffect(FILTERS[0]);
-        }, 3000);
+        }, 1500);
 
       } catch (error) {
         console.error("DeepAR initialization failed:", error);
